@@ -1,0 +1,37 @@
+---
+- name: Ensure 'sudo' group exists
+  group:
+    name: sudo
+    state: present
+
+- name: Create a deploy user with sudo access
+  user:
+    name: "deployer"
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+    create_home: yes
+
+- name: Allow 'deployer' to use sudo without password
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^deployer'
+    line: 'deployer ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: Remove insecure packages
+  apt:
+    name: ["telnet", "rsh-client", "rsh-redone-client"]
+    state: absent
+
+- name: Update apt cache and upgrade packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Strict shell limits (prevent Fork Bomb)
+  lineinfile:
+    path: /etc/security/limits.conf
+    line: "* hard nproc 2000" # Ограничение на кол-во процессов для юзеров
+    state: present

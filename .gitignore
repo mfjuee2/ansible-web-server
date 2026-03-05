@@ -1,0 +1,6 @@
+*.retry
+*.log
+.DS_Store
+# Don't store keys!
+*.pem
+*.key

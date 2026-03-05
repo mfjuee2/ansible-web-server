@@ -1,0 +1,13 @@
+# Базовые настройки
+bind 127.0.0.1
+port 6379
+daemonize yes
+supervised systemd
+dir /var/lib/redis
+
+# Настройки производительности (Ограничиваем память, например 256mb)
+maxmemory 256mb
+maxmemory-policy allkeys-lru
+
+# Безопасность
+protected-mode yes

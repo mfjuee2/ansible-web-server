@@ -1,0 +1,30 @@
+# Sysctl тюнинг (защита от сетевых атак)
+---
+- name: Advanced Sysctl optimization
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+  loop:
+    # Игнорируем ICMP-запросы (пинг)
+    - { key: 'net.ipv4.icmp_echo_ignore_all', value: '1' }
+    # Защита от SYN-flood атак
+    - { key: 'net.ipv4.tcp_syncookies', value: '1' }
+    - { key: 'net.ipv4.tcp_max_syn_backlog', value: '2048' }
+    - { key: 'net.ipv4.tcp_synack_retries', value: '2' }
+    # Запрещаем пересылку пакетов (если это не роутер)
+    - { key: 'net.ipv4.ip_forward', value: '0' }
+    # Игнорируем ошибки в ICMP пакетах
+    - { key: 'net.ipv4.icmp_ignore_bogus_error_responses', value: '1' }
+    # Ignore route change
+    - { key: 'net.ipv4.conf.all.accept_source_route', value: '0' }
+    # Уменьшаем время ожидания закрытия сокета (быстрее освобождаем ресурсы)
+    - { key: 'net.ipv4.tcp_fin_timeout', value: '20' }
+    # Ограничиваем количество попыток заново открыть соединение
+    - { key: 'net.ipv4.tcp_retries2', value: '5' }
+    # Включаем проверку обратного пути (Reverse Path Filtering)
+    # Сервер будет отбрасывать пакеты, которые пришли с интерфейса, через который они не могут уйти
+    - { key: 'net.ipv4.conf.default.rp_filter', value: '1' }
+    - { key: 'net.ipv4.conf.all.rp_filter', value: '1' }
+    

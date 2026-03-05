@@ -1,0 +1,15 @@
+---
+# Копируем скрипт бэкапа на сервер
+- name: Upload backup script
+  copy:
+    src: backup_to_remote.sh
+    dest: /usr/local/bin/db_backup.sh
+    mode: '0755'
+
+# Добавляем задачу в Cron (запуск каждый день в 3 часа ночи)
+- name: Schedule DB backup cron job
+  cron:
+    name: "Daily DB backup"
+    minute: "0"
+    hour: "3"
+    job: "/usr/local/bin/db_backup.sh"

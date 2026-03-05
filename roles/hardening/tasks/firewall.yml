@@ -1,0 +1,20 @@
+---
+- name: Allow custom SSH port in UFW
+  ufw:
+    rule: allow
+    port: '{{ ssh_port }}'
+    proto: tcp
+
+- name: Allow nginx port in UFW
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+
+- name: Enable UFW and deny incoming by default
+  ufw:
+    state: enabled
+    default: deny
+    direction: incoming
+
+# TODO Add the required ports

@@ -1,0 +1,7 @@
+---
+- name: Setup Web Servers
+  hosts: all
+  become: yes # Выполнять всё под sudo
+  roles:
+    - hardening
+    - webstack

@@ -1,0 +1,38 @@
+# roles/webstack/templates/nginx_vhost.j2
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ domain }} www.{{ domain }};
+
+    root /var/www/{{ domain }}/public;
+    index index.php index.html index.htm;
+
+    # Скрываем версию Nginx от хакеров
+    server_tokens off;
+
+    # Заголовки безопасности (Security Headers)
+    add_header X-Frame-Options "SAMEORIGIN" always; # Защита от Clickjacking
+    add_header X-XSS-Protection "1; mode=block" always; # Защита от Cross-Site Scripting
+    add_header X-Content-Type-Options "nosniff" always; # Запрет на угадывание MIME-типа
+    add_header Referrer-Policy "no-referrer-when-downgrade" always;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # Обработка PHP (настроено под php-fpm, который ты установил)
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock; # Убедись, что версия PHP совпадает с установленной! (в Ubuntu 22.04 обычно 8.1, в 24.04 может быть 8.3)
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    # Запрещаем доступ к скрытым файлам (например, .git, .env)
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+}
