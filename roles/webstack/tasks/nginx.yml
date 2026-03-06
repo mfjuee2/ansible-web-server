@@ -4,6 +4,12 @@
     name: ["nginx", "php-fpm", "php-pgsql"]
     state: present
 
+- name: Add rate limiting to Nginx config
+  ansible.builtin.lineinfile:
+    path: /etc/nginx/nginx.conf
+    insert_after: 'http {'
+    line: '    limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s;'
+    
 - name: Deploy Nginx Config from Template
   template:
     src: nginx_vhost.j2
