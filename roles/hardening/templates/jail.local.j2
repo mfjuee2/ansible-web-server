@@ -1,0 +1,12 @@
+[DEFAULT]
+# Бан на 1 час, если 5 ошибок за 10 минут
+bantime  = 3600
+findtime = 600
+maxretry = 5
+ignoreip = 127.0.0.1/8 ::1 {{ ignore_ips | default('') }}
+
+[sshd]
+enabled = true
+port    = {{ ssh_port }}
+logpath = %(sshd_log)s
+backend = %(sshd_backend)s

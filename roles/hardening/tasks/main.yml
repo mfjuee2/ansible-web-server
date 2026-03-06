@@ -4,3 +4,4 @@
 - import_tasks: users.yml
 - import_tasks: sysctl.yml
 - import_tasks: docker.yml
+- import_tasks: fail2ban.yml
